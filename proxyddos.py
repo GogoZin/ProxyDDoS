@@ -405,7 +405,7 @@ def send_slow():
         if len(socket_list) > 0:
             for s in socket_list:
                 try:
-                    s.send(f"Symbol: {rC(rand)}\r\n")
+                    s.send(f"Symbol: {rC(rand)}\r\n".encode())
                     print(f"{s} SLOW FLOODING")
                 except:
                     s.close()

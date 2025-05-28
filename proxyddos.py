@@ -119,7 +119,7 @@ def check_proxy(proxy): # 檢測proxy的TCP connection跟HTTP REQUESTS
 
     s = socks.socksocket()
     s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
-    s.settimeout(1)
+    s.settimeout(2)
 
     try:
         s.connect((host, port))
@@ -305,18 +305,25 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
                 download_proxy.append(lines)
 
 
-    # print("Start Get Github Proxies")
-    # for u in git_proxy_list:
-    #     host = u.split(".com/")[1]
-    #     r = requests.get(u)
-    #     if r.status_code == 200:
-    #         print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m{host}\033[0m")
-    #         lst = r.text.split("\n")
-    #         for lines in lst:
-    #             if len(lines) > 10 and len(lines) < 22:
-    #                 download_proxy.append(lines)
-    
-    download_proxy = sorted(set(download_proxy))
+    print("Start Get Github Proxies")
+    for u in git_proxy_list:
+        host = u.split(".com/")[1]
+        r = requests.get(u)
+        if r.status_code == 200:
+            print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m{host}\033[0m")
+            lst = r.text.split("\n")
+            for lines in lst:
+                if len(lines) > 10 and len(lines) < 22:
+                    download_proxy.append(lines)
+    uni_ip = set()
+    result = []
+    for item in download_proxy:
+        pip, pport = item.split(":")
+        if pip not in uni_ip:
+            uni_ip.add(pip)
+            result.append(item)
+
+    download_proxy = sorted(result)
 
 
 def launchThreads():

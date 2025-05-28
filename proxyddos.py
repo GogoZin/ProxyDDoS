@@ -318,9 +318,9 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
     uni_ip = set()
     result = []
     for item in download_proxy:
-        pip, pport = item.split(":")
-        if pip not in uni_ip:
-            uni_ip.add(pip)
+        p_ip = item.split(":")[0]
+        if p_ip not in uni_ip:
+            uni_ip.add(p_ip)
             result.append(item)
 
     download_proxy = sorted(result)

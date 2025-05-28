@@ -164,6 +164,7 @@ def launchChecker(): # 開始檢測proxy
         t.daemon = True
         t.start()
         threads.append(t)
+        time.sleep(0.01)
 
     q.join()
 

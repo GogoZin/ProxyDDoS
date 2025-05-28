@@ -119,7 +119,7 @@ def check_proxy(proxy): # 檢測proxy的TCP connection跟HTTP REQUESTS
 
     s = socks.socksocket()
     s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
-    s.settimeout(2)
+    s.settimeout(1)
 
     try:
         s.connect((host, port))

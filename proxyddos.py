@@ -216,7 +216,7 @@ def headerHandle(): #封包標頭處理
         origin += f"https://{host}\r\n"
     else:
         origin += f"http://{host}\r\n"
-    uir = f"Upgrade-Insecure-Requests: 1\r\n" # 最大程度模擬瀏覽器
+    uir = f"Upgrade-Insecure-Requests: 1\r\n"
 
     # Http 安全性標頭, 大部分主流的瀏覽器都支援了, 是判斷為正常流量 或是機器人的標準之一
     # 新的站點大部分都是預設啟用sec的, 也就是沒有sec的都會被識別為惡意流量
@@ -229,8 +229,8 @@ def headerHandle(): #封包標頭處理
     sec += f"Sec-Ch-Ua-platform: \"Windows\"\r\n"
     sec += f"Sec-Ch-Ua-platform-version: \"19.0.0\"\r\n"
     sec += f"Sec-Ch-Ua-wow64: ?0\r\n"
-    sec += f"Sec-Fetch-Dest: empty\r\n"
-    sec += f"Sec-Fetch-Mode: cors\r\n"
+    sec += f"Sec-Fetch-Dest: document\r\n"
+    sec += f"Sec-Fetch-Mode: navigate\r\n"
     sec += f"Sec-Fetch-Site: same-origin\r\n"
     sec += f"Sec-Fetch-User: ?1\r\n"
     sec += f"Sec-Gpc: 1\r\n"

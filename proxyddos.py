@@ -216,6 +216,7 @@ def headerHandle(): #封包標頭處理
         origin += f"https://{host}\r\n"
     else:
         origin += f"http://{host}\r\n"
+    uir = f"Upgrade-Insecure-Requests: 1\r\n" # 最大程度模擬瀏覽器
 
     # Http 安全性標頭, 大部分主流的瀏覽器都支援了, 是判斷為正常流量 或是機器人的標準之一
     # 新的站點大部分都是預設啟用sec的, 也就是沒有sec的都會被識別為惡意流量
@@ -231,11 +232,12 @@ def headerHandle(): #封包標頭處理
     sec += f"Sec-Fetch-Dest: empty\r\n"
     sec += f"Sec-Fetch-Mode: cors\r\n"
     sec += f"Sec-Fetch-Site: same-origin\r\n"
+    sec += f"Sec-Fetch-User: ?1\r\n"
     sec += f"Sec-Gpc: 1\r\n"
 
-    header = conn + accept + referer + useragent + x_for + fake + cache + pri + origin
+    header = conn + accept + referer + useragent + x_for + fake + cache + pri + origin + uir
     if brute: #如果啟用brute 就最大程度減少標頭 只留關鍵標頭
-        header = conn + cache + useragent + x_for + fake
+        header = conn + accept + referer + useragent + uir
     if cdn == 'bypass': #如果是bypass模式 那就必須加入sec
         header +=sec
     return header #回傳處理好的標頭
@@ -251,7 +253,7 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
              "https://www.proxy-list.download/api/v1/get?type=http"
              ]
     
-    print("Start Fetch Socks5 Proxies")
+    print("Start Fetch http Proxies")
     for u in s5URL:
         r = requests.get(u)
         if r.status_code == 200:

@@ -281,6 +281,44 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
                 download_proxy.append(proxy)
             
         print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m{u}\033[0m")
+
+    print("Start Fetch From FreeProxyUpdate")
+    fpu = ["https://freeproxyupdate.com/files/txt/http.txt",
+          "https://freeproxyupdate.com/files/txt/https-ssl.txt",
+          "https://freeproxyupdate.com/files/txt/elite.txt",
+          "https://freeproxyupdate.com/files/txt/anonymous.txt",
+          "https://freeproxyupdate.com/files/txt/transparent.txt",
+          "https://freeproxyupdate.com/files/txt/argentina.txt",
+          "https://freeproxyupdate.com/files/txt/australia.txt",
+          "https://freeproxyupdate.com/files/txt/bangladesh.txt",
+          "https://freeproxyupdate.com/files/txt/brazil.txt",
+          "https://freeproxyupdate.com/files/txt/canada.txt",
+          "https://freeproxyupdate.com/files/txt/china.txt",
+          "https://freeproxyupdate.com/files/txt/colombia.txt",
+          "https://freeproxyupdate.com/files/txt/dominican-republic.txt",
+          "https://freeproxyupdate.com/files/txt/ecuador.txt",
+          "https://freeproxyupdate.com/files/txt/egypt.txt",
+          "https://freeproxyupdate.com/files/txt/france.txt",
+          "https://freeproxyupdate.com/files/txt/germany.txt",
+          "https://freeproxyupdate.com/files/txt/india.txt",
+          "https://freeproxyupdate.com/files/txt/indonesia.txt",
+          "https://freeproxyupdate.com/files/txt/japan.txt",
+          "https://freeproxyupdate.com/files/txt/russia.txt",
+          "https://freeproxyupdate.com/files/txt/singapore.txt",
+          "https://freeproxyupdate.com/files/txt/south-korea.txt",
+          "https://freeproxyupdate.com/files/txt/spain.txt",
+          "https://freeproxyupdate.com/files/txt/thailand.txt",
+          "https://freeproxyupdate.com/files/txt/united-kingdom.txt",
+          "https://freeproxyupdate.com/files/txt/united-states.txt",
+          "https://freeproxyupdate.com/files/txt/vietnam.txt"]
+    for u in fpu:
+        r = requests.get(u)
+        if r.status_code == 200:
+            print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m{u}\033[0m")
+            lst = r.text.split('\n')
+            for lines in lst:
+                if len(lines) > 10 and len(lines) < 22:
+                    download_proxy.append(lines)        
     
     git_proxy_list = [                 #Github proxies is suck, so don't use it
             "https://raw.githubusercontent.com/monosans/proxy-list/refs/heads/main/proxies_anonymous/http.txt",
@@ -319,15 +357,15 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
                 if len(lines) > 10 and len(lines) < 22:
                     download_proxy.append(lines)
 
-    # uni_ip = set()
-    # result = []
-    # for item in download_proxy:
-    #     p_ip = item.split(":")[0]
-    #     if p_ip not in uni_ip:
-    #         uni_ip.add(p_ip)
-    #         result.append(item)
+    uni_ip = set()
+    result = []
+    for item in download_proxy:
+        p_ip = item.split(":")[0]
+        if p_ip not in uni_ip:
+            uni_ip.add(p_ip)
+            result.append(item)
 
-    download_proxy = sorted(set(download_proxy))
+    download_proxy = sorted(set(result))
 
 
 def launchThreads():

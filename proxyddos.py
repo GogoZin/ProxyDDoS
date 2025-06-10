@@ -345,6 +345,15 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
         for lines in lst:
             if len(lines) > 10 and len(lines) < 22:
                 download_proxy.append(lines)
+                
+    ip89cn = "https://api.89ip.cn/tqdl.html?api=1&num=9999&port=&address=&isp="
+    r = requests.get(ip89cn)
+    if r.status_code == 200:
+        print(f"[ProxyDDoS]->status: \033[32;1m{r.status_code}\033[0m \033[36m89ip.cn\033[0m")
+        lst = r.text.split('\n')
+        for lines in lst:
+            if len(lines) > 10 and len(lines) < 22:
+                download_proxy.append(lines)
 
     print("Start Get Github Proxies")
     for u in git_proxy_list:

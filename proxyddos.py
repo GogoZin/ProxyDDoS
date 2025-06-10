@@ -293,6 +293,7 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
             "https://raw.githubusercontent.com/MuRongPIG/Proxy-Master/refs/heads/main/http.txt",
             "https://raw.githubusercontent.com/sunny9577/proxy-scraper/refs/heads/master/generated/http_proxies.txt",
             "https://raw.githubusercontent.com/roosterkid/openproxylist/refs/heads/main/HTTPS_RAW.txt",
+            "https://raw.githubusercontent.com/vakhov/fresh-proxy-list/refs/heads/master/http.txt",
             "https://raw.githubusercontent.com/r00tee/Proxy-List/refs/heads/main/Https.txt"
     ]
 

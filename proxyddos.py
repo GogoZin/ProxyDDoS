@@ -357,15 +357,15 @@ def ProxyScraper(): # 抓取proxy的 , 用了無數次 可以肯定的說 50~70k
                 if len(lines) > 10 and len(lines) < 22:
                     download_proxy.append(lines)
 
-    uni_ip = set()
-    result = []
-    for item in download_proxy:
-        p_ip = item.split(":")[0]
-        if p_ip not in uni_ip:
-            uni_ip.add(p_ip)
-            result.append(item)
+    # uni_ip = set()
+    # result = []
+    # for item in download_proxy:
+    #     p_ip = item.split(":")[0]
+    #     if p_ip not in uni_ip:
+    #         uni_ip.add(p_ip)
+    #         result.append(item)
 
-    download_proxy = sorted(set(result))
+    download_proxy = sorted(set(download_proxy))
 
 
 def launchThreads():

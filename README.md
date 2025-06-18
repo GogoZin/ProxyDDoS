@@ -1,107 +1,109 @@
-# ⚡ ProxyDDoS - 2025年最強效能的 CC 壓測工具
+# ⚡ ProxyDDoS - The Most Powerful CC Stress Testing Tool of 2025
 ![License](https://img.shields.io/badge/license-MIT-green)  
-> 🛡️ **ProxyDDoS** 是一款為 2025 年開發的 **壓力測試工具**，  
-> 通過模擬真實用戶請求，幫助你測試網站的抗壓能力。
+> 🛡️ **ProxyDDoS** is a **DDoS stress testing tool** designed for 2025,
+> simulating real user traffic to help evaluate your website’s resilience under load.
 >
-> 使用HTTP PROXY 最佳化模擬真實HTTP流量
-> 支援Cloudflare以及Google Shell等CDN服務
+> Optimized with HTTP PROXY to mimic realistic traffic
+> Supports Cloudflare, Google Shell, and other CDN services.
 
 ---
 
-## 🚀 功能特色
+## 🚀 Key Features
 
-- 🔹 **完整的請求標頭**  
- 模擬標準瀏覽器行為 + 偽造 IP，提升真實度與效果。
+- 🔹 **Complete Request Headers**  
+ Simulates real browser behavior with spoofed IPs to increase authenticity and effectiveness.
 
-- 🔹 **自動抓取並代理檢測**  
- 全網最快速、最精準的代理檢測模組，省時高效。
+- 🔹 **Auto Proxy Scraping & Validation**  
+ Fastest and most accurate proxy checker—saves your time and boosts reliability.
 
-- 🔹 **高穩定性**  
- 多執行緒與記憶體管理完善，**不會出現 core dumped**！
+- 🔹 **Rock-Solid Stability**  
+ Built with proper multithreading and memory handling—**no core dumps!**
 
-- 🔹 **完全匿名**  
- 將一些暴露敏感資訊的標頭寫死了 安全第一。
+- 🔹 **Truly Anonymous**  
+ Sensitive headers are hardcoded to prevent leaks. Your privacy is a priority.
 
 ---
 
-## 🖥️ 系統配置需求
+## 🖥️ System Requirements
 
-| 項目       | 建議配置        |
+| Component       | Recommended Spec        |
 |------------|-----------------|
-| 處理器     | 4 核心以上      |
-| 記憶體     | 8 GB 以上        |
-| 網路速度   | 100 Mbps 以上   |
+| CPU     | 4 cores or more      |
+| RAM     | At least 8 GB        |
+| Network   | 100 Mbps or faster   |
 
 ---
 
-## 📦 安裝說明
+## 📦 Installation
 
-### ✅ 下載專案
+### ✅ Clone the Project
 ```bash
 git clone https://github.com/GogoZin/ProxyDDoS
 cd ProxyDDoS
 ```
 
-### 🐧 Linux 安裝模組
+### 🐧 For Linux
 ```bash
 pip3 install -r requirements.txt
 ```
 
-### 🧊 Windows 安裝模組
+### 🧊 For Windows
 ```bash
 py -m pip install -r requirements.txt
 ```
 
-## 🏃 使用方式
+## 🏃 How to Use
 
-### 🐧 Linux 執行命令
+### 🐧 Linux Run Command
 ```bash
 python3 proxyddos.py <GET/POST/HEAD> <host> <port> <threads> <path> <args>
 ```
 
-### 🧊 Windows 執行命令
+### 🧊 Windows Run Command
 ```bash
 py proxyddos.py <GET/POST/HEAD> <host> <port> <threads> <path> <args>
 ```
 
-### ✅ 範例
+### ✅ Example
 ```bash
 python3 proxyddos.py GET example.com 443 500 / --fetch
 ```
 ---
 
-## 📜 授權條款
+## 📜 License
 
-本專案使用 [MIT License](LICENSE)。
+This project is licensed under the [MIT License](LICENSE)。
 
 ---
 
-## ⚠️ 使用規章
+## ⚠️ Terms of Use
 
-> 📌 請注意：本工具僅供開發者學習與合法壓力測試用途。 
+> 📌 Important：This tool is for educational and legal stress testing purposes only.
 >  
-> ❌ 禁止用於任何非法活動（如 DDoS 攻擊、未經授權的網站測試）。
+> ❌ DO NOT use it for illegal activities (e.g. DDoS attacks, unauthorized testing).
 > 
-> 📄 使用本工具即表示您同意以上規章與 MIT 授權條款。
+> 📄 By using this tool, you agree to these terms and the MIT license.
 > 
-> ⚖️ 作者對於任何非法用途造成的後果概不負責。
+> ⚖️ The author is not responsible for any consequences resulting from misuse.
 > 
-> 🙅 不同意規章者請勿下載或使用本工具。
+> 🙅 If you do not agree with the terms, do not download or use this tool.
 >
 > ---
 
-## 🌟 支持本專案 & 分享一些基本觀念
+## 🌟 Support & Some Quick Insights
 
-假如發送400個請求, Proxy不一定會全部轉發, 這是因為每個Proxy的轉發效率跟限制不同  
+Let’s say you send 400 requests—some proxies might not relay all of them.
 
-所以你會看到有些Proxy重複出現 但是不同端口  
+That’s because each proxy has different speeds, limits, and behaviors.
 
-就是因為每個端口轉發效率不同 (當然也有可能是蜜罐)
+You might see the same proxy IP show up with different ports.
 
-所以如果你想控制測試變量 盡量使用付費的私人代理
+That’s totally normal—it’s because each port has different performance (or it might even be a honeypot 👀).
 
-公開代理品質真的很差勁的 且不一定安全
+If you want more consistent results, stick to paid private proxies.
 
-這就是要把敏感Header寫死的原因 
+Public proxies? Honestly, most of them are slow, unreliable, and unsafe.
 
-如果你喜歡本專案 記得留下Star⭐ 感謝支持 !
+That’s also why we hardcode the sensitive headers—for your safety.
+
+If you like this project, don’t forget to leave a Star ⭐ Thanks for the support!
